@@ -5,8 +5,11 @@ services:
   app:
     build:
       context: node
+      dockerfile: ./Dockerfile
     container_name: app
     entrypoint: dockerize -wait tcp://db:3306 -timeout 20s docker-entrypoint.sh
+    command: >
+      sh -c "npm install && node index.js"
     networks:
       - node-network
     volumes:
@@ -18,6 +21,9 @@ services:
       - db
 
   db:
+    build:
+      context: db
+      dockerfile: ./Dockerfile
     image: mysql:5.7
     command: --innodb-use-native-aio=0
     container_name: db
